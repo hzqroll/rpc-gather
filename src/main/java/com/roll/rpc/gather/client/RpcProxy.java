@@ -53,8 +53,7 @@ public class RpcProxy {
                         register.setServiceName(serviceName);
                         register.setServiceVersion(serviceVersion);
                         register.setAddress(serviceAddress);
-                        register.setAppName("serviceRegistry");
-                        serviceAddress = registerService.lookup(register);
+                        serviceAddress = registerService.lookup(register).get(1);
                         System.out.println("discovery service:" + serviceName + "->" + serviceAddress);
                     }
                     if (serviceAddress == null || serviceAddress.length() == 0) {

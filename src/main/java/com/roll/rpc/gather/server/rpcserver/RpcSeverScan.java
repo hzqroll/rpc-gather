@@ -1,6 +1,5 @@
 package com.roll.rpc.gather.server.rpcserver;
 
-import com.roll.rpc.gather.common.RegisterConstant;
 import com.roll.rpc.gather.register.client.Register;
 import com.roll.rpc.gather.server.RpcServer;
 import org.springframework.context.ApplicationContext;
@@ -15,40 +14,36 @@ import java.util.Map;
  * created on 2019-09-05 20:28
  */
 @Component
-public class RpcServiceCollector {
-    /**
-     * 应用名
-     */
-    private String appName;
+public class RpcSeverScan {
 
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
 
-    public RpcServiceCollector(String appName, ApplicationContext applicationContext) {
-        this.appName = appName;
+    public RpcSeverScan(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    public void collectResisterList() {
+    /**
+     * 获取注解的服务提供者
+     *
+     * @param address 注册到的服务端ip：port
+     */
+    public void collectResisterList(String address, String port) {
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(RpcServer.class);
         for (Object bean : beans.values()) {
             RpcServer rpcServer = bean.getClass().getAnnotation(RpcServer.class);
             String serviceName = rpcServer.value().getName();
             String serviceVersion = rpcServer.version();
             Register register = new Register();
-            register.setAppName(appName);
             register.setServiceName(serviceName);
             register.setServiceVersion(serviceVersion);
-            register.setAddress(getAddress());
+            register.setAddress(address);
+            register.setPort(port);
+            register.setTimeout(rpcServer.timeout());
+            register.setRetryTimes(rpcServer.retryTimes());
+            // 已经注册的register
             RpcServiceCache.refreshRegister(register);
-
-            RpcServiceCache.refreshserviceBeanMap(serviceName, bean);
+            // 类名和register对应
+            RpcServiceCache.refreshServiceBeanMap(serviceName, bean);
         }
-    }
-
-    /**
-     * 启动ip+port
-     */
-    private String getAddress() {
-        return RegisterConstant.LOCAL_ADDRESS;
     }
 }

@@ -1,9 +1,12 @@
 package com.roll.rpc.gather.common.util;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
+import com.roll.rpc.gather.common.RpcRequest;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
@@ -54,6 +57,40 @@ public class SerializationUtil {
             cacheSchema.put(cls, schema);
         }
         return schema;
+    }
+
+    /**
+     * JSON序列化(对象->字节数组)
+     */
+    public static <T> byte[] jsonSerialize(T obj) {
+        return JSONObject.toJSONBytes(obj);
+    }
+
+    /**
+     * JSON反序列化
+     */
+    public static <T> T jsonDeserialize(byte[] data, Class<T> cls) {
+        return JSONObject.parseObject(data, cls);
+    }
+
+    public static void main(String[] args) {
+        RpcRequest rpcRequest = new RpcRequest();
+        rpcRequest.setInterfaceName("interFaceName");
+        rpcRequest.setMethodName("methodName");
+        rpcRequest.setParameters(null);
+        rpcRequest.setRequestId("requestId");
+        rpcRequest.setServiceVersion("v1");
+        long currentTime  = System.currentTimeMillis();
+        for (int i = 0;i <1000000;i++){
+            serialize(rpcRequest);
+        }
+        System.out.println(System.currentTimeMillis() - currentTime);
+
+        long currentTime1  = System.currentTimeMillis();
+        for (int i = 0;i <1000000;i++){
+            jsonSerialize(rpcRequest);
+        }
+        System.out.println(System.currentTimeMillis() - currentTime1);
     }
 
 }

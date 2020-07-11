@@ -20,5 +20,7 @@ public class RegisterConstant {
      */
     public static final int ZK_CONNECT_TIMEOUT = 10000;
 
-    public static final String LOCAL_ADDRESS = "127.0.0.1:8001";
+    public static final String LOCAL_NETTY_SERVER_ADDRESS = "127.0.0.1";
+
+    public static final String LOCAL_NETTY_SERVER_PORT = "8001";
 }

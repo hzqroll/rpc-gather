@@ -16,20 +16,28 @@ import java.util.Map;
  * created on 2019-09-06 14:19
  */
 public final class RpcServiceCache {
+    /**
+     * 待注册服务缓存
+     */
     private static final List<Register> registers;
 
+    /**
+     * 被注册的服务bean缓存, 验证服务的ref是否有效
+     */
     private static final Map<String, Object> serviceBeanMap;
 
     static {
         registers = new ArrayList<>();
-
         serviceBeanMap = new HashMap<>();
     }
 
-    public static void refreshserviceBeanMap(String beanName, Object bean) {
+    public static void refreshServiceBeanMap(String beanName, Object bean) {
         serviceBeanMap.put(beanName, bean);
     }
 
+    /**
+     * 不支持多包同样路径的类
+     */
     public static Object getServiceBean(String beanName) {
         return serviceBeanMap.get(beanName);
     }

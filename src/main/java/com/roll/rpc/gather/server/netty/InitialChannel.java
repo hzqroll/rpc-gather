@@ -10,7 +10,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 /**
- * @author roll
+ * channel处理器
  * created on 2019-09-06 10:22
  */
 public class InitialChannel extends ChannelInitializer<SocketChannel> {

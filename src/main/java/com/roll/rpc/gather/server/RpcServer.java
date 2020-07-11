@@ -26,4 +26,14 @@ public @interface RpcServer {
      * 服务版本号
      */
     String version() default "";
+
+    /**
+     * 服务超时时间
+     */
+    long timeout() default 1000L;
+
+    /**
+     * 重试次数
+     */
+    int retryTimes() default 0;
 }

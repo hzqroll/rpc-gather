@@ -32,9 +32,6 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
-
-
-
     /**
      * 调用具体实现
      *
@@ -52,12 +49,12 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         }
 
         Class<?> serviceClass = bean.getClass();
-        String metthod = request.getMethodName();
+        String method = request.getMethodName();
         Class<?>[] paramTypes = request.getParameterTypes();
         Object[] params = request.getParameters();
 
         FastClass serviceFastClass = FastClass.create(serviceClass);
-        FastMethod fastMethod = serviceFastClass.getMethod(metthod, paramTypes);
+        FastMethod fastMethod = serviceFastClass.getMethod(method, paramTypes);
         return fastMethod.invoke(bean, params);
     }
 }

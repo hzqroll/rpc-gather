@@ -12,7 +12,7 @@ import java.util.List;
  * created on 2019-09-06 17:39
  */
 public class RpcDecoder extends ByteToMessageDecoder {
-    private Class<?> genericClass;
+    private final Class<?> genericClass;
 
     public RpcDecoder(Class<?> genericClass) {
         this.genericClass = genericClass;

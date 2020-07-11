@@ -13,7 +13,8 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 /**
- * @author roll
+ * RPC 客户端，与服务端收发消息
+ * 继承了SimpleChannelInboundHandler类
  * created on 2019-09-03 20:07
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
@@ -35,7 +36,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
+        response.setException((Exception) cause);
     }
 
     RpcResponse send(RpcRequest request) throws Exception {
