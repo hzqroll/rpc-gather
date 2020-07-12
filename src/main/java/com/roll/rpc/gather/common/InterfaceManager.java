@@ -26,7 +26,7 @@ public class InterfaceManager {
     }
 
     /**
-     * 接口+ip+port 对应的netty链接
+     * 接口 对应的netty链接
      */
     private static final Map<String, ChannelFuture> nettyClientChannelFutureMap = new ConcurrentHashMap<>();
 
@@ -35,24 +35,20 @@ public class InterfaceManager {
      */
     private static final Map<String, RpcClientConfig> rpcClientConfigMap = new ConcurrentHashMap<>();
 
+    /**
+     * 全限定类名与注册信息对应关系
+     */
     private static final Map<String, Register> registerMap = new ConcurrentHashMap<>();
 
     /**
-     * 客户端启动BootStrap
-     *
-     * @param interfaceName 全限定类名
+     * 代理实例与接口的对应关系
      */
-    public void setNettyChannelFutureMap(String interfaceName) {
-        NettyClientManager nettyClientManager = new NettyClientManager();
-        Bootstrap bootstrap = nettyClientManager.getBootstrap();
-        RpcClientConfig rpcClientConfig = rpcClientConfigMap.get(interfaceName);
-
-        ChannelFuture channelFuture = bootstrap.connect();
-        nettyClientChannelFutureMap.put(interfaceName, channelFuture);
-    }
+    private static final Map<String, String> proxyRegisterMap = new ConcurrentHashMap<>();
 
     /**
      * 配置RpcClient配置信息
+     * <p>
+     * 客户端启动BootStrap
      *
      * @param interfaceName   全限定类名
      * @param rpcClientConfig 客户端配置信息
@@ -66,8 +62,12 @@ public class InterfaceManager {
         Register register = new Register();
         register.setServiceName(interfaceName);
         register.setServiceVersion(rpcClientConfig.getVersion());
+        // todo 根据注册接口的失效和新增，动态增加节点
         List<String> ipAndPortList = registerService.lookup(register);
-        ChannelFuture channelFuture = bootstrap.connect();
+        String url = ipAndPortList.get(0);
+        String ip = url.substring(0, url.indexOf(":"));
+        String port = url.substring(url.indexOf(":") + 1);
+        ChannelFuture channelFuture = bootstrap.connect(ip, Integer.parseInt(port));
         nettyClientChannelFutureMap.put(interfaceName, channelFuture);
     }
 
@@ -81,6 +81,10 @@ public class InterfaceManager {
         registerMap.put(interfaceName, register);
     }
 
+    public void setProxyRegisterMap(String proxyClassName, String interfaceName) {
+        proxyRegisterMap.put(proxyClassName, interfaceName);
+    }
+
     public ChannelFuture getNettyClientChannelFuture(String interfaceName) {
         return nettyClientChannelFutureMap.get(interfaceName);
     }
@@ -91,5 +95,9 @@ public class InterfaceManager {
 
     public Register getRegisterMap(String interfaceName) {
         return registerMap.get(interfaceName);
+    }
+
+    public String getInterfaceName(String proxyName) {
+        return proxyRegisterMap.get(proxyName);
     }
 }

@@ -41,12 +41,12 @@ public class InterfaceProxyManager implements ApplicationContextAware {
      * @param rpcClientConfig 配置信息
      */
     public void registerProxy(Class<?> interfaceClass, RpcClientConfig rpcClientConfig) {
-        Object interfaceProxyInstance = Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, new RpcClientProxy());
+        Object interfaceProxyInstance = Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}, new RpcClientProxy(interfaceManager));
         String beanName = interfaceClass.getSimpleName();
         String classPath = interfaceClass.getName();
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(interfaceClass.cast(interfaceProxyInstance).getClass());
         beanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getBeanDefinition());
         interfaceManager.setRpcClientConfigMap(classPath, rpcClientConfig);
-        interfaceManager.setNettyChannelFutureMap(classPath);
+        interfaceManager.setProxyRegisterMap(interfaceProxyInstance.getClass().getName(), classPath);
     }
 }

@@ -14,7 +14,7 @@ public class RpcProxyTest implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         try {
-            System.out.println("问候之前的日志记录...");
+            System.out.println(proxy.getClass().getName());
             // JVM通过这条语句执行原来的方法(反射机制)
             //result = method.invoke(this, args);
         } catch (Exception e) {
